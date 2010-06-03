@@ -1,0 +1,15 @@
+== Purpose
+
+A very simple framework that runs through a series of commands and will let you know if any exit in error. 
+
+== High Level Concepts
+
+This application is currently designed to be run as a cronjob, with frequency of checks controlled there. On each execution, the app will update the desired repository of checks and then run through them. It will then alert the configured parties if any of the checks fail. 
+
+== Future Features
+
+- Summaries (monitor X failed 12 times last month...)
+- Multiple-Notification channels
+- Run as a background job and allow per check frequencies
+
+

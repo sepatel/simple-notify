@@ -1,0 +1,13 @@
+repositories:
+  prod:
+    url: git://github.com/byronsalty/simple-notify.git
+    type: git
+    commands: examples/prod/
+    report: true
+    alert: byron@saltylabs.com
+  dev:
+    url: git://github.com/byronsalty/simple-notify.git
+    type: git
+    commands: examples/dev/
+    report: true
+    alert: byron@saltylabs.com
