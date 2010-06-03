@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+base = File.dirname(__FILE__)
+$:.unshift(base)
+$:.unshift(base + "/lib")
+
+require 'yaml'
+require 'fileutils'
+include FileUtils
+require 'notify'
+
+if ARGV.length == 0
+  puts "Usage: ./run <repository name>"
+  puts "Example: ./run prod"
+  exit 1
+end
+
+
+settings = YAML.load(IO.read("config/repo.yml"))
+repo = settings['repositories'][ARGV[0]]
+
+puts "repo: #{repo.to_yaml}"
+
+if File.exists?(repo['checkout-to'])
+  cd repo['checkout-to']
+  system("git pull")
+else
+  cd File.dirname(repo['checkout-to'])
+  baseName = File.basename(repo['checkout-to'])
+
+  system("git clone #{repo['url']} #{baseName}") 
+
+  cd repo['checkout-to']
+end
+
+cd repo['commands']
+puts "Pwd: #{pwd()}"
+commands = []
+Dir.glob("*") do |f|
+  if File.executable?(f)
+    puts "Found: #{f}"
+    commands << f
+  end
+end
+
+passed = []
+failed = []
+commands.each do |cmd|
+  puts "Trying: #{cmd}" 
+  success = system("./#{cmd} >/tmp/out 2>&1")
+  if success
+    passed << cmd
+  else
+    failed << cmd
+  end
+end
+
+puts "----------------"
+puts "Report"
+puts "Passed: #{passed.length}"
+puts "Failed: #{failed.length}"
+
+if !failed.empty?
+  puts "Send alert to #{repo['alert']}"
+end
+
