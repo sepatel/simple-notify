@@ -61,6 +61,9 @@ module Notify
   def handle_alert(repo, failed)
     if !failed.empty?
       puts "Send alert to #{repo['alert']}"
+      subject = "#{failed.length} #{repo['subject']}"
+      recips = repo['alert'].gsub(',', ' ')
+      system("echo \"Failed: #{failed[0]}\" | mail -s \"#{subject}\" #{recips}")
     end
   end
 end
