@@ -2,6 +2,13 @@
 
 A very simple framework that runs through a series of commands and will let you know if any exit in error. 
 
+== Setup
+
+1. Create a git repo with a directory of executable checks. 
+2. git clone git://github.com/byronsalty/simple-notify.git
+3. Configure simple-notify/config/repo.yml to use repo created at #1
+4. Setup cron to execute simple-notify/run passing in the repo name.
+
 == High Level Concepts
 
 This application is currently designed to be run as a cronjob, with frequency of checks controlled there. On each execution, the app will update the desired repository of checks and then run through them. It will then alert the configured parties if any of the checks fail. 
