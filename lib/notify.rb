@@ -37,15 +37,16 @@ module Notify
   end
 
   def run_commands(commands)
-    passed = []
-    failed = []
+    passed = {}
+    failed = {}
     commands.each do |cmd|
       puts "Trying: #{cmd}"
-      success = system("./#{cmd} >/tmp/out 2>&1")
+      output = %x[./#{cmd} 2>&1]
+      success = $? == 0
       if success
-        passed << cmd
+        passed[cmd] = output
       else
-        failed << cmd
+        failed[cmd] = output
       end
     end
     return passed, failed
@@ -63,7 +64,20 @@ module Notify
       puts "Send alert to #{repo['alert']}"
       subject = "#{failed.length} #{repo['subject']}"
       recips = repo['alert'].gsub(',', ' ')
-      system("echo \"Failed: #{failed[0]}\" | mail -s \"#{subject}\" #{recips}")
+
+      report = "/tmp/report-#{Process.pid}.txt"
+
+      File.open(report, "w+") do |f|
+        failed.each do |k,v|
+          f.write "#{k}\n"
+          f.write v
+          f.write "-----------------------\n"
+        end
+      end 
+
+      #system("echo \"Failed: #{failed[0]}\" | mail -s \"#{subject}\" #{recips}")
+      system("cat #{report} | mail -s \"#{subject}\" #{recips}")
+      rm report
     end
   end
 end
