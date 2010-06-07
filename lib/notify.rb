@@ -10,14 +10,16 @@ module Notify
   end
 
   def checkout(repo)
+    cmd = repo['git-cmd'] || "git"
+
     if File.exists?(repo['checkout-to'])
       cd repo['checkout-to']
-      system("git pull")
+      system("#{cmd} pull")
     else
       cd File.dirname(repo['checkout-to'])
       baseName = File.basename(repo['checkout-to'])
     
-      system("git clone #{repo['url']} #{baseName}")
+      system("#{cmd} clone #{repo['url']} #{baseName}")
     
       cd repo['checkout-to']
     end
