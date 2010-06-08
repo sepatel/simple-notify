@@ -89,9 +89,10 @@ module Notify
     cmd = repo['git-cmd'] || "git"
 
     if File.exists?(repo['checkout-to'])
+      old_dir = pwd
       cd repo['checkout-to']
       system("#{cmd} clean -f")
-      cd -
+      cd old_dir
     end
   end
 end
