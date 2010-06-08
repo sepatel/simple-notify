@@ -91,6 +91,7 @@ module Notify
     if File.exists?(repo['checkout-to'])
       cd repo['checkout-to']
       system("#{cmd} clean -f")
+      cd -
     end
   end
 end
