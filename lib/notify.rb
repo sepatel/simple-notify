@@ -83,7 +83,7 @@ module Notify
     end
   end
 
-  def checkout(repo)
+  def clean_up(repo)
     cmd = repo['git-cmd'] || "git"
 
     if File.exists?(repo['checkout-to'])
