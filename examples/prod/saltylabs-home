@@ -1,2 +1,2 @@
 # verify the home page comes up in 2 seconds
-wget --tries=1 --timeout=2 http://www.saltylabs.com/
+wget --tries=1 --timeout=2 http://saltylabs.com/
