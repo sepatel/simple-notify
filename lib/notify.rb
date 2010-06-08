@@ -38,7 +38,8 @@ module Notify
     return commands
   end
 
-  def run_commands(commands)
+  def run_commands(repo)
+    commands = find_commands(repo)
     passed = {}
     failed = {}
     commands.each do |cmd|
@@ -50,6 +51,7 @@ module Notify
       else
         failed[cmd] = output
       end
+      clean_up(repo)
     end
     return passed, failed
   end

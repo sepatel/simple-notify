@@ -18,8 +18,7 @@ repo = get_repo(ARGV[0])
 
 checkout(repo)
 
-commands = find_commands(repo)
-passed, failed = run_commands(commands)
+passed, failed = run_commands(repo)
 
 display_report(passed, failed)
 
