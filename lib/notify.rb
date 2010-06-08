@@ -82,4 +82,13 @@ module Notify
       rm report
     end
   end
+
+  def checkout(repo)
+    cmd = repo['git-cmd'] || "git"
+
+    if File.exists?(repo['checkout-to'])
+      cd repo['checkout-to']
+      system("#{cmd} clean -f")
+    end
+  end
 end

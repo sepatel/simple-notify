@@ -25,3 +25,5 @@ display_report(passed, failed)
 
 handle_alert(repo, failed)
 
+clean_up(repo)
+
