@@ -13,3 +13,10 @@ repositories:
     commands: examples/dev/
     alert: byron@saltylabs.com
     subject: Dev failures
+  local:
+    url: .
+    checkout-to: /tmp/sn-local
+    type: git
+    commands: examples/prod/
+    alert: byron@saltylabs.com
+    subject: Testing failures

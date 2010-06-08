@@ -1,5 +1,6 @@
 require 'yaml'
 require 'fileutils'
+require 'erb'
 include FileUtils
 
 module Notify
@@ -63,23 +64,21 @@ module Notify
     puts "Failed: #{failed.length}"
   end
 
-  def handle_alert(repo, failed)
+  def handle_alert(repo, failed, base)
     if !failed.empty?
       puts "Send alert to #{repo['alert']}"
       subject = "#{failed.length} #{repo['subject']}"
+      template_filename = repo['template'] || "failure-email.erb"
       recips = repo['alert'].gsub(',', ' ')
 
       report = "/tmp/report-#{Process.pid}.txt"
 
-      File.open(report, "w+") do |f|
-        failed.each do |k,v|
-          f.write "#{k}\n"
-          f.write v
-          f.write "-----------------------\n"
-        end
-      end 
+      template = IO.read("#{base}/templates/#{template_filename}")
 
-      #system("echo \"Failed: #{failed[0]}\" | mail -s \"#{subject}\" #{recips}")
+      File.open(report, "w+") do |f|
+        f.write(ERB.new(template).result)
+      end
+
       system("cat #{report} | mail -s \"#{subject}\" #{recips}")
       rm report
     end

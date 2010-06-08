@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-base = File.dirname(__FILE__)
+base = File.expand_path(File.dirname(__FILE__))
 $:.unshift(base)
 $:.unshift(base + "/lib")
 
@@ -22,7 +22,7 @@ passed, failed = run_commands(repo)
 
 display_report(passed, failed)
 
-handle_alert(repo, failed)
+handle_alert(repo, failed, base)
 
 clean_up(repo)
 
