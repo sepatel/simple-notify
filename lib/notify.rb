@@ -57,7 +57,7 @@ module Notify
     return passed, failed
   end
  
-  def display_report(repo, base, passed, failed)
+  def generate_report(repo, base, passed, failed)
     puts "----------------"
     puts "Report"
     puts "Passed: #{passed.length}"
