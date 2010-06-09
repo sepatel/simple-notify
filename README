@@ -8,10 +8,18 @@ A very simple framework that runs through a series of commands and will let you 
 2. git clone git://github.com/byronsalty/simple-notify.git
 3. Configure simple-notify/config/repo.yml to use repo created at #1
 4. Setup cron to execute simple-notify/run passing in the repo name.
+5. Check dependencies (below)
+
+== Dependencies
+
+1. Ruby
+2. outbound email via mail command (Read: http://library.linode.com/email/exim/send-only-mta-ubuntu-10.04-lucid)
+
 
 == High Level Concepts
 
 This application is currently designed to be run as a cronjob, with frequency of checks controlled there. On each execution, the app will update the desired repository of checks and then run through them. It will then alert the configured parties if any of the checks fail. 
+
 
 == Future Features
 
