@@ -57,14 +57,16 @@ module Notify
     return passed, failed
   end
  
-  def display_report(passed, failed)
+  def display_report(repo, base, passed, failed)
     puts "----------------"
     puts "Report"
     puts "Passed: #{passed.length}"
     puts "Failed: #{failed.length}"
+
+     
   end
 
-  def handle_alert(repo, failed, base)
+  def handle_alert(repo, base, passed, failed)
     if !failed.empty?
       puts "Send alert to #{repo['alert']}"
       subject = "#{failed.length} #{repo['subject']}"

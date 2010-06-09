@@ -20,9 +20,9 @@ checkout(repo)
 
 passed, failed = run_commands(repo)
 
-display_report(passed, failed)
+generate_report(repo, base, passed, failed)
 
-handle_alert(repo, failed, base)
+handle_alert(repo, base, passed, failed)
 
 clean_up(repo)
 
