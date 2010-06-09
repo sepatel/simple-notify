@@ -14,9 +14,10 @@ repositories:
     alert: byron@saltylabs.com
     subject: Dev failures
   local:
-    url: .
+    url: /home/bsalty/projects/simple-notify
     checkout-to: /tmp/sn-local
     type: git
     commands: examples/prod/
     alert: byron@saltylabs.com
     subject: Testing failures
+    report-to: /tmp/local-out
