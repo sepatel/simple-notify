@@ -63,7 +63,27 @@ module Notify
     puts "Passed: #{passed.length}"
     puts "Failed: #{failed.length}"
 
-     
+    report_dir = repo['report-to'] 
+    if report_dir
+    
+      mkdir report_dir if !File.exists?(report_dir)
+       
+      output_template = IO.read("#{base}/templates/output.rhtml")
+      index_template = IO.read("#{base}/templates/index.rhtml")
+  
+      passed.merge(failed).each do |name, output|
+        filename = "#{report_dir}/#{name}.txt"
+        File.open(filename, "w+") do |f|
+          f.write(ERB.new(output_template).result(binding))
+        end
+      end
+
+      index_filename = "#{report_dir}/index.html"
+      File.open(index_filename, "w+") do |f|
+        f.write(ERB.new(index_template).result)
+      end
+      
+    end
   end
 
   def handle_alert(repo, base, passed, failed)
