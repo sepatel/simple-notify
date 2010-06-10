@@ -71,11 +71,10 @@ module Notify
       output_template = IO.read("#{base}/templates/output.rhtml")
       index_template = IO.read("#{base}/templates/index.rhtml")
   
-      passed.merge(failed).each do |name, out|
+      passed.merge(failed).each do |name, output|
         filename = "#{report_dir}/#{name}.txt"
         File.open(filename, "w+") do |f|
-          output = out 
-          f.write(ERB.new(output_template).result)
+          f.write(ERB.new(output_template).result(binding))
         end
       end
 
