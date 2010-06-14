@@ -24,7 +24,7 @@ This application is currently designed to be run as a cronjob, with frequency of
 == Future Features
 
 - Summaries (monitor X failed 12 times last month...)
-- Multiple-Notification channels
+- Multiple-Notification channels (email, im, etc)
 - Run as a background job and allow per check frequencies
 
 
