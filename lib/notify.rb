@@ -1,6 +1,7 @@
 require 'yaml'
 require 'fileutils'
 require 'erb'
+require 'alert'
 include FileUtils
 
 module Notify
@@ -41,23 +42,21 @@ module Notify
 
   def run_commands(repo)
     commands = find_commands(repo)
-    passed = {}
-    failed = {}
+    results = []
     commands.each do |cmd|
       puts "Trying: #{cmd}"
       output = %x[./#{cmd} 2>&1]
       success = $? == 0
-      if success
-        passed[cmd] = output
-      else
-        failed[cmd] = output
-      end
+      results << Alert.new(cmd, success, output)
       clean_up(repo)
     end
-    return passed, failed
+    return results
   end
  
-  def generate_report(repo, base, passed, failed)
+  def generate_report(repo, base, results)
+    failed = results.reject {|x| x.passed?}
+    passed = results.select {|x| x.passed?}
+
     puts "----------------"
     puts "Report"
     puts "Passed: #{passed.length}"
@@ -71,8 +70,8 @@ module Notify
       output_template = IO.read("#{base}/templates/output.rhtml")
       index_template = IO.read("#{base}/templates/index.rhtml")
   
-      passed.merge(failed).each do |name, output|
-        filename = "#{report_dir}/#{name}.txt"
+      results.each do |alert|
+        filename = "#{report_dir}/#{alert.name}.txt"
         File.open(filename, "w+") do |f|
           f.write(ERB.new(output_template).result(binding))
         end
@@ -80,13 +79,14 @@ module Notify
 
       index_filename = "#{report_dir}/index.html"
       File.open(index_filename, "w+") do |f|
-        f.write(ERB.new(index_template).result)
+        f.write(ERB.new(index_template).result(binding))
       end
       
     end
   end
 
-  def handle_alert(repo, base, passed, failed)
+  def handle_alert(repo, base, results)
+    failed = results.reject {|x| x.passed?}
     if !failed.empty?
       puts "Send alert to #{repo['alert']}"
       subject = "#{failed.length} #{repo['subject']}"
@@ -98,7 +98,7 @@ module Notify
       template = IO.read("#{base}/templates/#{template_filename}")
 
       File.open(report, "w+") do |f|
-        f.write(ERB.new(template).result)
+        f.write(ERB.new(template).result(binding))
       end
 
       system("cat #{report} | mail -s \"#{subject}\" #{recips}")

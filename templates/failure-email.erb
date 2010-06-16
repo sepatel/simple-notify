@@ -1,7 +1,7 @@
 You have failures:
 
-<% failed.each do |name, output| %>
-  <%= name %>
-  <%= output %>
+<% failed.each do |alert| %>
+  <%= alert.name %>
+  <%= alert.output %>
   --------------------------
 <% end %>

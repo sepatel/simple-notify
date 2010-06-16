@@ -18,11 +18,11 @@ repo = get_repo(ARGV[0])
 
 checkout(repo)
 
-passed, failed = run_commands(repo)
+results = run_commands(repo)
 
-generate_report(repo, base, passed, failed)
+generate_report(repo, base, results)
 
-handle_alert(repo, base, passed, failed)
+handle_alert(repo, base, results)
 
 clean_up(repo)
 

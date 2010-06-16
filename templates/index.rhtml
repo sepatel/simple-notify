@@ -4,15 +4,15 @@
 <body>
   <% if !failed.empty? %>
     <h2>Failed:</h2>
-    <% failed.sort.each do |name, output| %>
-      <a href="<%= name %>.txt"><font color="failed"><%= name %></font></a><br/>
+    <% failed.sort.each do |alert| %>
+      <a href="<%= alert.name %>.txt"><font color="failed"><%= alert.name %></font></a><br/>
     <% end %>
   
   <% end %>
   
   <h2>Passed:</h2>
-  <% passed.sort.each do |name, output| %>
-    <a href="<%= name %>.txt"><font color="green"><%= name %></font></a><br/>
+  <% passed.sort.each do |alert| %>
+    <a href="<%= alert.name %>.txt"><font color="green"><%= alert.name %></font></a><br/>
   <% end %>
 
 </body>
