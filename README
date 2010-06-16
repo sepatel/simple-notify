@@ -27,4 +27,6 @@ This application is currently designed to be run as a cronjob, with frequency of
 - Multiple-Notification channels (email, im, etc)
 - Run as a background job and allow per check frequencies
 
+== License
 
+Released under MIT License
