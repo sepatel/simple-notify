@@ -3,21 +3,14 @@ repositories:
     url: git://github.com/byronsalty/simple-notify.git
     checkout-to: /tmp/sn
     type: git
-    commands: examples/prod/
+    commands: examples/commands/
     alert: byron@saltylabs.com
     subject: Prod failures
-  dev:
-    url: git://github.com/byronsalty/simple-notify.git
-    checkout-to: /tmp/sn
-    type: git
-    commands: examples/dev/
-    alert: byron@saltylabs.com
-    subject: Dev failures
   local:
     url: /home/bsalty/projects/simple-notify
     checkout-to: /tmp/sn-local
     type: git
-    commands: examples/prod/
+    commands: examples/commands/
     alert: byron@saltylabs.com
     subject: Testing failures
     report-to: /tmp/local-out
