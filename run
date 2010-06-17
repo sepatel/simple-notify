@@ -14,15 +14,20 @@ end
 
 
 
-repo = get_repo(ARGV[0])
-
-checkout(repo)
-
-results = run_commands(repo)
-
-generate_report(repo, base, results)
-
-handle_alert(repo, base, results)
-
-clean_up(repo)
-
+begin 
+  repo = get_repo(ARGV[0])
+  
+  checkout(repo)
+  
+  results = run_commands(repo)
+  
+  generate_report(repo, base, results)
+  
+  handle_alert(repo, base, results)
+  
+  clean_up(repo)
+rescue RuntimeError => error
+  puts "RuntimeError caught"
+  puts error
+  send_error(repo, base, error)
+end  

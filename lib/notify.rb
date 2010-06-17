@@ -16,12 +16,14 @@ module Notify
 
     if File.exists?(repo['checkout-to'])
       cd repo['checkout-to']
-      system("#{cmd} pull")
+      success = system("#{cmd} pull") 
+      raise "git pull failed!" if !success
     else
       cd File.dirname(repo['checkout-to'])
       baseName = File.basename(repo['checkout-to'])
     
-      system("#{cmd} clone #{repo['url']} #{baseName}")
+      success = system("#{cmd} clone #{repo['url']} #{baseName}")
+      raise "git clone failed!" if !success
     
       cd repo['checkout-to']
     end
@@ -93,17 +95,29 @@ module Notify
       template_filename = repo['template'] || "failure-email.erb"
       recips = repo['alert'].gsub(',', ' ')
 
-      report = "/tmp/report-#{Process.pid}.txt"
-
-      template = IO.read("#{base}/templates/#{template_filename}")
-
-      File.open(report, "w+") do |f|
-        f.write(ERB.new(template).result(binding))
-      end
-
-      system("cat #{report} | mail -s \"#{subject}\" #{recips}")
-      rm report
+      send_email(template_filename, base, recips, subject, binding) 
     end
+  end
+ 
+  def send_error(repo, base, error)
+    puts "Sending system error to #{repo['alert']}"
+    template_filename = "system-error-email.erb"
+    recips = repo['alert'].gsub(',', ' ')
+    subject = "simple-notify System Error"
+  
+    send_email(template_filename, base, recips, subject, binding) 
+  end
+
+  def send_email(template_filename, base, recips, subject, binding)
+    report = "/tmp/report-#{Process.pid}.txt"
+    template = IO.read("#{base}/templates/#{template_filename}")
+
+    File.open(report, "w+") do |f|
+      f.write(ERB.new(template).result(binding))
+    end
+
+    system("cat #{report} | mail -s \"#{subject}\" #{recips}")
+    rm report
   end
 
   def clean_up(repo)
@@ -116,4 +130,5 @@ module Notify
       cd old_dir
     end
   end
+  
 end
