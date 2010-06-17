@@ -6,9 +6,12 @@ A very simple framework that runs through a series of commands and will let you 
 
 1. Create a git repo with a directory of executable checks. 
 2. git clone git://github.com/byronsalty/simple-notify.git
-3. Configure simple-notify/config/repo.yml to use repo created at #1
-4. Setup cron to execute simple-notify/run passing in the repo name.
+3. Copy the example configs into the base before you edit: 
+     cp -r simple-notify/examples/config simple-notify/config
+4. Configure simple-notify/config/repo.yml to use repo created at #1
 5. Check dependencies (below)
+6. Run manually to verify setup: ./run <repo name>
+7. Setup cron to execute simple-notify/run passing in the repo name.
 
 == Dependencies
 
