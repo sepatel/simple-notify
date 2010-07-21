@@ -107,6 +107,8 @@ module Notify
     template_filename = "system-error-email.erb"
     recips = system_recips.gsub(',', ' ')
     subject = "simple-notify System Error"
+    location = `pwd`
+    host = `hostname`.strip
   
     send_email(template_filename, base, recips, subject, binding) 
   end
