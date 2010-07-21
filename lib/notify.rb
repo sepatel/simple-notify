@@ -7,7 +7,9 @@ include FileUtils
 module Notify
 
   def get_repo(repo_name)
-    settings = YAML.load(IO.read("config/repo.yml"))
+    base = File.expand_path(File.dirname(__FILE__)).split("/")
+    base = base[0, base.length - 1].join("/")
+    settings = YAML.load(IO.read("#{base}/config/repo.yml"))
     return settings['repositories'][repo_name]
   end
 
