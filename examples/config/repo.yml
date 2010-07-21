@@ -4,7 +4,8 @@ repositories:
     checkout-to: /tmp/sn
     type: git
     commands: examples/commands/
-    alert: byron@saltylabs.com
+    alert: byron@saltylabs.com,someone.else@saltylabs.com
+    system-alert: byron@saltylabs.com
     subject: Prod failures
   local:
     url: /home/bsalty/projects/simple-notify

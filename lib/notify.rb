@@ -102,9 +102,10 @@ module Notify
   end
  
   def send_error(repo, base, error)
-    puts "Sending system error to #{repo['alert']}"
+    system_recips = repo['system-alert'] || repo['alert']
+    puts "Sending system error to #{system_recips}"
     template_filename = "system-error-email.erb"
-    recips = repo['alert'].gsub(',', ' ')
+    recips = system_recips.gsub(',', ' ')
     subject = "simple-notify System Error"
   
     send_email(template_filename, base, recips, subject, binding) 
