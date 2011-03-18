@@ -3,19 +3,17 @@ base = File.expand_path(File.dirname(__FILE__))
 $:.unshift(base)
 $:.unshift(base + "/lib")
 
+require 'cmd'
 require 'notify'
+
 include Notify 
 
-if ARGV.length == 0
-  puts "Usage: ./run <repository name>"
-  puts "Example: ./run prod"
-  exit 1
-end
-
-
+cmd = CommandLine.new
+cmd.addParameter('repository', 'name of the repository listed in the configuration to be used')
+cmd.process
 
 begin 
-  repo = get_repo(ARGV[0])
+  repo = get_repo(cmd.parameters[0])
   
   checkout(repo)
   
@@ -31,3 +29,4 @@ rescue RuntimeError => error
   puts error
   send_error(repo, base, error)
 end  
+
