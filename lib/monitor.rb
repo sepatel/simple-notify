@@ -6,7 +6,7 @@ class Monitor
     attr_accessor :cookies, :response_time, :response, :data, :status, :error_count
 
     def initialize(url, cookies, params, &block)
-      @exit_on_error = false
+      @exit_on_error = true
       @error_count = 0
       @cookies = cookies || {}
       cookieList = []
