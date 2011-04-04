@@ -32,28 +32,30 @@ module Notify
   end
 
   def find_commands(repo)
-    cd repo['commands']
-    puts "Pwd: #{pwd()}"
+    dir = repo['commands']
+    puts "Commands Directory: #{dir}"
+    cd dir
     commands = []
-    Dir.glob("*") do |f|
-      if File.executable?(f)
-        puts "Found: #{f}"
-        commands << f
-      end
-    end
+    Dir.glob("*").each {|file|
+      commands << file if File.executable?(file) unless File.directory?(file)
+    }
+    commands.sort! # sorting to make it easier to control order which might be needed later
+    puts "Commands Found: #{commands.join(', ')}"
     return commands
   end
 
-  def run_commands(repo)
-    commands = find_commands(repo)
+  def run_commands(repo, lib_path=nil)
     results = []
-    commands.each do |cmd|
-      puts "Trying: #{cmd}"
-      output = %x[./#{cmd} 2>&1]
+    find_commands(repo).each {|cmd|
+      puts "Monitor: #{cmd}"
+      unless lib_path.nil?
+        output = %x[export RUBYLIB=#{lib_path}:$RUBYLIB; ./#{cmd} 2>&1]
+      else
+        output = %x[./#{cmd} 2>&1]
+      end
       success = $? == 0
       results << Alert.new(cmd, success, output)
-      clean_up(repo)
-    end
+    }
     return results
   end
  

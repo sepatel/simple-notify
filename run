@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 base = File.expand_path(File.dirname(__FILE__))
-$:.unshift(base)
-$:.unshift(base + "/lib")
+lib_path = File.join(base, 'lib')
+$:.unshift lib_path
 
 require 'cmd'
 require 'notify'
@@ -15,15 +15,15 @@ cmd.process
 begin 
   repo = get_repo(cmd.parameters[0])
   
-  checkout(repo)
+  #checkout(repo)
   
-  results = run_commands(repo)
+  results = run_commands(repo, lib_path)
   
   generate_report(repo, base, results)
   
   handle_alert(repo, base, results)
   
-  clean_up(repo)
+  #clean_up(repo)
 rescue RuntimeError => error
   puts "RuntimeError caught"
   puts error
