@@ -6,6 +6,7 @@ class Monitor
     attr_accessor :cookies, :response_time, :response, :data, :status, :error_count
 
     def initialize(url, cookies, params, &block)
+      @exit_on_error = false
       @error_count = 0
       @cookies = cookies || {}
       cookieList = []
@@ -40,6 +41,8 @@ class Monitor
       @response_time = (finish - start) * 1000
 
       self.instance_eval(&block)
+
+      Kernel.exit @error_count if @exit_on_error unless @error_count == 0
     end
 
     def check(message, condition)
@@ -61,8 +64,8 @@ class Monitor
       check("Response type expected to be under #{duration}ms. Was #{@response_time}ms", @response_time < duration) unless duration.nil?
     end
 
-    def exit_on_errors
-      Kernel.exit error_count unless error_count == 0
+    def skip_exit_on_error
+      @exit_on_error = false
     end
   end
 
