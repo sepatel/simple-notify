@@ -15,7 +15,7 @@ cmd.process
 begin 
   repo = get_repo(cmd.parameters[0])
   
-  #checkout(repo)
+  checkout(repo)
   
   results = run_commands(repo, lib_path)
   
@@ -23,7 +23,7 @@ begin
   
   handle_alert(repo, base, results)
   
-  #clean_up(repo)
+  clean_up(repo)
 rescue RuntimeError => error
   puts "RuntimeError caught"
   puts error
