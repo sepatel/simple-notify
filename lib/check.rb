@@ -1,8 +1,10 @@
-require 'datastore'
+require 'rubygems'
 require 'net/https'
+require 'cmd'
+require 'datastore'
 
-class Monitor
-  class UrlMonitor
+class Check
+  class UrlCheck
     attr_accessor :cookies, :response_time, :response, :data, :status, :error_count
 
     def initialize(url, cookies, params, &block)
@@ -70,7 +72,7 @@ class Monitor
   end
 
   def self.url(url, cookies={}, params={}, &block)
-    monitor = UrlMonitor.new(url, cookies, params, &block)
-    monitor.cookies
+    check = UrlCheck.new(url, cookies, params, &block)
+    check.cookies
   end
 end

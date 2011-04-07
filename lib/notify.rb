@@ -48,11 +48,12 @@ module Notify
     results = []
     find_commands(repo).each {|cmd|
       puts "Monitor: #{cmd}"
-      unless lib_path.nil?
-        output = %x[export RUBYLIB=#{lib_path}:$RUBYLIB; ./#{cmd} 2>&1]
-      else
-        output = %x[./#{cmd} 2>&1]
-      end
+      ENV['RUBYLIB'] = lib_path if ENV['RUBYLIB'].nil? unless lib_path.nil?
+#      unless lib_path.nil?
+#        output = %x[export RUBYLIB=#{lib_path}:$RUBYLIB; ./#{cmd} 2>&1]
+#      else
+      output = %x[./#{cmd} 2>&1]
+#      end
       success = $? == 0
       results << Alert.new(cmd, success, output)
     }
