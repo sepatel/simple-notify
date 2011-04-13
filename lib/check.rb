@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'net/https'
 require 'cmd'
 require 'datastore'
 
@@ -8,6 +7,7 @@ class Check
     attr_accessor :cookies, :response_time, :response, :data, :status, :location, :error_count
 
     def initialize(url, cookies, params, &block)
+      require 'net/https'
       @exit_on_error = true
       @error_count = 0
       @cookies = cookies || {}
@@ -31,7 +31,7 @@ class Check
           @data = @response.body
           @status = @response.code.to_i
           pattern = Regexp.compile(/(.*?)=(.*?);.*?/)
-          @location = @response['Location']
+          @location = @response['Location'] if @status >= 300 and @status < 400
           unless @location.nil?
             @location = "#{uri.scheme}://#{uri.host}:#{uri.port}/#{@location}" if @location.start_with?('/')
           end
@@ -65,30 +65,34 @@ class Check
     end
 
     def check(message, condition)
-      @error_count = @error_count + 1 unless condition
+      error_count = error_count + 1 unless condition
       status = (condition) ? "Pass" : "Fail"
       $stdout.puts "#{status}\t#{message}"
     end
 
     def check_cookie_exist(cookie)
-      check "Expecting cookie '#{cookie}' to exist", !@cookies[cookie].nil?
+      check "Expecting cookie '#{cookie}' to exist", !cookies[cookie].nil?
     end
 
     def check_cookie_value(cookie, expected_value)
-      check "Expecting cookie '#{cookie}' to be '#{expected_value}'", @cookies[cookie] == expected_value
+      check "Expecting cookie '#{cookie}' to be '#{expected_value}'", cookies[cookie] == expected_value
     end
 
     def check_success(duration=nil)
       check "Server responded with status #{status}", status >= 200 && status < 400
-      check("Response expected to be under #{duration}ms. Was #{@response_time}ms", @response_time < duration) unless duration.nil?
+      check("Response expected to be under #{duration}ms. Was #{response_time}ms", response_time < duration) unless duration.nil?
     end
 
     def skip_exit_on_error
-      @exit_on_error = false
+      exit_on_error = false
     end
   end
 
   def self.url(url, cookies={}, params={}, &block)
     UrlCheck.new(url, cookies, params, &block)
+  end
+
+  def self.url_redirect(url_check, &block)
+    UrlCheck.new(url_check.location, url_check.cookies, {}, &block)
   end
 end
