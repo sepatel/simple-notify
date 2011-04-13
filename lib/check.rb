@@ -1,11 +1,11 @@
 require 'rubygems'
 require 'net/https'
-require './cmd'
-require './datastore'
+require 'cmd'
+require 'datastore'
 
 class Check
   class UrlCheck
-    attr_accessor :cookies, :response_time, :response, :data, :status, :error_count
+    attr_accessor :cookies, :response_time, :response, :data, :status, :location, :error_count
 
     def initialize(url, cookies, params, &block)
       @exit_on_error = true
@@ -31,6 +31,10 @@ class Check
           @data = @response.body
           @status = @response.code.to_i
           pattern = Regexp.compile(/(.*?)=(.*?);.*?/)
+          @location = @response['Location']
+          unless @location.nil?
+            @location = "#{uri.scheme}://#{uri.host}:#{uri.port}/#{@location}" if @location.start_with?('/')
+          end
           cookie = @response['set-cookie']
           unless cookie.nil?
             cookie.split(/, */).each {|token|
@@ -85,7 +89,6 @@ class Check
   end
 
   def self.url(url, cookies={}, params={}, &block)
-    check = UrlCheck.new(url, cookies, params, &block)
-    check.cookies
+    UrlCheck.new(url, cookies, params, &block)
   end
 end
