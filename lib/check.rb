@@ -30,13 +30,13 @@ class Check
           @response = http.request(req)
           @data = @response.body
           @status = @response.code.to_i
-          pattern = Regexp.compile(/(.*?)=(.*?);.*?/)
           @location = @response['Location'] if @status >= 300 and @status < 400
           unless @location.nil?
             @location = "#{uri.scheme}://#{uri.host}:#{uri.port}/#{@location}" if @location.start_with?('/')
           end
           cookie = @response['set-cookie']
           unless cookie.nil?
+            pattern = Regexp.compile(/(.*?)=(.*?);.*?/)
             cookie.split(/, */).each {|token|
               # TODO: Add support for cookie deletions. This is broken right now
               # since deleted cookies are actually being 'added' instead.
@@ -52,11 +52,11 @@ class Check
       rescue Exception => e
         case e
           when Errno::ECONNRESET
-            check "Connection Terminated by Server", false
+            check "Connection Terminated by Server at #{url}", false
           when Errno::ECONNABORTED
-            check "Connection Aborted", false
+            check "Connection Aborted to #{url}", false
           when Errno::ETIMEDOUT,Timeout::Error
-            check "Timeout establishing connection", false
+            check "Timeout establishing connection to #{url}", false
           else
             check "Error establishing connection: #{e}", false
         end
@@ -65,7 +65,7 @@ class Check
     end
 
     def check(message, condition)
-      error_count = error_count + 1 unless condition
+      @error_count = @error_count + 1 unless condition
       status = (condition) ? "Pass" : "Fail"
       $stdout.puts "#{status}\t#{message}"
     end
@@ -75,12 +75,14 @@ class Check
     end
 
     def check_cookie_value(cookie, expected_value)
-      check "Expecting cookie '#{cookie}' to be '#{expected_value}'", cookies[cookie] == expected_value
+      message = "Expecting cookie '#{cookie}' to be '#{expected_value}'"
+      message = "#{message} but was actually '#{cookies[cookie]}'" unless cookies[cookie] == expected_value
+      check message, cookies[cookie] == expected_value
     end
 
     def check_success(duration=nil)
       check "Server responded with status #{status}", status >= 200 && status < 400
-      check("Response expected to be under #{duration}ms. Was #{response_time}ms", response_time < duration) unless duration.nil?
+      check("Response time of #{response_time}ms expected to be under #{duration}ms", response_time < duration) unless duration.nil?
     end
 
     def skip_exit_on_error
