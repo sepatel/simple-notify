@@ -17,7 +17,8 @@ class Check
       headers = {}
       headers['Cookie'] = cookieList.join('; ') unless cookieList.length == 0
 
-      uri = URI.parse("#{$baseurl}#{url}")
+      complete_url = "#{$baseurl}#{url}".gsub('|', '%7C').gsub('^', '%5E')
+      uri = URI.parse(complete_url)
       http = Net::HTTP.new(uri.host, uri.port)
       http.open_timeout = 30
       http.use_ssl  = true if uri.scheme == 'https'
