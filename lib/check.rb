@@ -4,10 +4,11 @@ require 'datastore'
 
 class Check
   class UrlCheck
-    attr_accessor :cookies, :response_time, :response, :data, :status, :location, :error_count
+    attr_accessor :cookies, :response_time, :response, :data, :status, :location, :error_count, :url
 
     def initialize(url, cookies, params, &block)
       require 'net/https'
+      @url = url
       @exit_on_error = true
       @error_count = 0
       @cookies = cookies || {}
@@ -71,7 +72,10 @@ class Check
     end
 
     def check_cookie_exist(cookie)
-      check "Expecting cookie '#{cookie}' to exist", !cookies[cookie].nil?
+      value = cookies[cookie]
+      message = "Expecting cookie '#{cookie}' to exist"
+      message = "#{message} containing value '#{value}'" unless value.nil?
+      check message, !value.nil?
     end
 
     def check_cookie_value(cookie, expected_value)
@@ -81,7 +85,7 @@ class Check
     end
 
     def check_success(duration=nil)
-      check "Server responded with status #{status}", status >= 200 && status < 400
+      check "Server responded with status #{status} to #{url}", status >= 200 && status < 400
       check("Response time of #{response_time}ms expected to be under #{duration}ms", response_time < duration) unless duration.nil?
     end
 
