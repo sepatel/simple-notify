@@ -85,7 +85,9 @@ class Check
     end
 
     def check_success(duration=nil)
-      check "Server responded with status #{status} to #{url}", status >= 200 && status < 400
+      message = "Status #{status} to #{url}"
+      message = "#{message} --> #{location}" unless location.nil?
+      check message, status >= 200 && status < 400
       check("Response time of #{response_time}ms expected to be under #{duration}ms", response_time < duration) unless duration.nil?
     end
 
