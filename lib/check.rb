@@ -23,8 +23,14 @@ class Check
       http.open_timeout = 30
       http.use_ssl  = true if uri.scheme == 'https'
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      req = Net::HTTP::Post.new(uri.path == '' ? '/' : uri.path, headers)
-      req.form_data = params
+      path = uri.path == '' ? '/' : uri.path
+      path = "#{path}?#{uri.query}" unless uri.query.nil?
+      if params.nil?
+        req = Net::HTTP::Get.new(path, headers)
+      else
+        req = Net::HTTP::Post.new(path, headers)
+        req.form_data = params
+      end
 
       start = Time.now
       begin
@@ -85,6 +91,13 @@ class Check
       check message, cookies[cookie] == expected_value
     end
 
+    def check_redirect(url)
+      message = "Expected redirect to '#{url}'"
+      message = "#{message} but statu was '#{status}'" unless (status >= 300 && status < 400)
+      message = "#{message} but was '#{location}'" unless location == url
+      check message, status >= 300 && status < 400 && location == url
+    end
+
     def check_success(duration=nil)
       message = "Status #{status} to #{url}"
       message = "#{message} --> #{location}" unless location.nil?
@@ -97,11 +110,12 @@ class Check
     end
   end
 
-  def self.url(url, cookies={}, params={}, &block)
+  def self.url(url, cookies={}, params=nil, &block)
     UrlCheck.new(url, cookies, params, &block)
   end
 
   def self.url_redirect(url_check, &block)
-    UrlCheck.new(url_check.location, url_check.cookies, {}, &block)
+    UrlCheck.new(url_check.location, url_check.cookies, nil, &block)
   end
 end
+
