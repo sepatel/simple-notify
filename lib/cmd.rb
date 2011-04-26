@@ -17,6 +17,10 @@ class CommandLine
     }
   end
 
+  def option(short_code, default_value)
+    return @options[short_code].nil? ? default_value : @options[short_code]
+  end
+
   def [](index)
     @parameters[index]
   end
