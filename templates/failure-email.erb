@@ -1,5 +1,8 @@
 You have failures:
+<% if repo['report-url'] %>
 
+See report: <%= repo['report-url'] %>
+<% end %>
 <% failed.each do |alert| %>
   <%= alert.name %>
 <%= alert.output %>
