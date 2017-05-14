@@ -108,6 +108,17 @@ class Check
     def skip_exit_on_error
       exit_on_error = false
     end
+
+    # Example usage:
+    # Check.url "http://www.google.com/" do
+    #  check_success 2000
+    #  on_error {puts self.data}
+    # end
+    def on_error(&block)
+      if @error_count != 0
+        self.instance_eval(&block)
+      end
+    end
   end
 
   def self.url(url, cookies={}, params=nil, &block)
